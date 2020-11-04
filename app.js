@@ -10,7 +10,8 @@ const dotenv = require('dotenv');
 const path = require('path');
 const sass = require('node-sass-middleware');
 
-const urls = require('./urls');
+const allUrls = require('./urls');
+const urls = allUrls.urls;
 
 /**
  * Load environment variables from .env file, where API keys and passwords are configured.
@@ -39,12 +40,8 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.disable('x-powered-by');
 
-
-for(let i=0;i<urls.get.length;i++) {
-  app.get(urls.get[i][0], urls.get[i][1]);
-}
-for(let i=0;i<urls.post.length;i++) {
-  app.post(urls.post[i][0], urls.get[i][1]);
+for(let i=0;i<urls.length;i++) {
+  app.all(urls[i][0], urls[i][1]);
 }
 
 /**
