@@ -8,7 +8,6 @@ const logger = require('morgan');
 const errorHandler = require('errorhandler');
 const dotenv = require('dotenv');
 const path = require('path');
-const mongoose = require('mongoose');
 const sass = require('node-sass-middleware');
 
 const urls = require('./urls');
@@ -19,30 +18,9 @@ const urls = require('./urls');
 dotenv.config({ path: '.env.example' });
 
 /**
- * Controllers (route handlers).
- */
-const homeController = require('./controllers/home');
-const contactController = require('./controllers/contact');
-
-
-/**
  * Create Express server.
  */
 const app = express();
-
-/**
- * Connect to MongoDB.
- */
-mongoose.set('useFindAndModify', false);
-mongoose.set('useCreateIndex', true);
-mongoose.set('useNewUrlParser', true);
-mongoose.set('useUnifiedTopology', true);
-mongoose.connect(process.env.MONGODB_URI);
-mongoose.connection.on('error', (err) => {
-  console.error(err);
-  console.log('%s MongoDB connection error. Please make sure MongoDB is running.');
-  process.exit();
-});
 
 /**
  * Express configuration.
@@ -61,13 +39,13 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.disable('x-powered-by');
 
-/**
- * Primary app routes.
- */
 
-app.get('/', homeController.index);
-app.get('/contact', contactController.getContact);
-app.post('/contact', contactController.postContact);
+for(let i=0;i<urls.get.length;i++) {
+  app.get(urls.get[i][0], urls.get[i][1]);
+}
+for(let i=0;i<urls.post.length;i++) {
+  app.post(urls.post[i][0], urls.get[i][1]);
+}
 
 /**
  * Error Handler.
